@@ -1,7 +1,6 @@
 package com.testHiberus.demo.adapters.in.rest;
 
 import com.testHiberus.demo.application.ports.in.PaymentOrderUseCase;
-import com.testHiberus.demo.domain.model.PaymentOrder;
 import com.testHiberus.demo.infrastructure.rest.adapter.api.PaymentOrderApi;
 import com.testHiberus.demo.infrastructure.rest.adapter.dto.PaymentOrderRequest;
 import com.testHiberus.demo.infrastructure.rest.adapter.dto.PaymentOrderResponse;
@@ -10,7 +9,6 @@ import com.testHiberus.demo.infrastructure.rest.mapper.PaymentRestMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -28,13 +26,13 @@ public class PaymentOrderController implements PaymentOrderApi {
 
 
     @Override
-    public Mono<ResponseEntity<PaymentOrderResponse>> initiatePaymentOrder(Mono<PaymentOrderRequest> paymentOrderRequest, ServerWebExchange exchange) throws Exception {
+    public Mono<ResponseEntity<PaymentOrderResponse>> initiatePaymentOrder(Mono<PaymentOrderRequest> paymentOrderRequest, ServerWebExchange exchange) {
         return paymentOrderRequest
                 .map(mapper::toDomain)
                 .flatMap(useCase::initiate)
                 .map(mapper::toResponse)
-                .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response))
-                .onErrorResume(e -> Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage())));
+                .map(response -> ResponseEntity.status(HttpStatus.CREATED).body(response));
+
     }
 
     @Override
@@ -46,7 +44,7 @@ public class PaymentOrderController implements PaymentOrderApi {
     }
 
     @Override
-    public Mono<ResponseEntity<PaymentOrderStatusResponse>> retrievePaymentOrderStatus(String id, ServerWebExchange exchange) throws Exception {
+    public Mono<ResponseEntity<PaymentOrderStatusResponse>> retrievePaymentOrderStatus(String id, ServerWebExchange exchange)  {
         return useCase.getById(id)
                 .map(mapper::toStatusResponse)
                 .map(ResponseEntity::ok)
