@@ -1,0 +1,100 @@
+openapi: 3.0.3  # O la versión que estés usando
+info:
+  title: Mi API
+  version: 1.0.0
+paths:
+  /payment-initiation/payment-orders:
+    post:
+      tags:
+        - PaymentOrder
+      summary: Initiate a payment order
+      operationId: initiatePaymentOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentOrderRequest'
+      responses:
+        '201':
+          description: Payment order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentOrderResponse'
+
+  /payment-initiation/payment-orders/{id}:
+    get:
+      tags:
+        - PaymentOrder
+      summary: Retrieve a payment order
+      operationId: retrievePaymentOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment order retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentOrderResponse'
+
+  /payment-initiation/payment-orders/{id}/status:
+    get:
+      tags:
+        - PaymentOrder
+      summary: Retrieve payment order status
+      operationId: retrievePaymentOrderStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment order status retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentOrderStatusResponse'
+components:
+  schemas:
+
+    PaymentOrderRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: double
+        currency:
+          type: string
+        debtorAccount:
+          type: string
+        creditorAccount:
+          type: string
+      required:
+        - amount
+        - currency
+        - debtorAccount
+        - creditorAccount
+
+    PaymentOrderResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+
+    PaymentOrderStatusResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
